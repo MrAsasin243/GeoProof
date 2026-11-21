@@ -12,20 +12,18 @@
 
 <div class="app">
 
-  <header class="top">
+    <header class="top">
     <div class="brand">Geo<b>Proof</b></div>
     <div class="top-sep" aria-hidden="true"></div>
 
     <nav class="topnav" aria-label="Разделы">
-      <button class="btn subtle only-mobile" id="toolsToggleBtn" type="button" aria-expanded="false" title="Инструменты">☰</button>
-      <button class="btn subtle" id="openMenuBtn" type="button" aria-controls="workspaceMenu" aria-expanded="false" title="Панель доказательства">∴ <span class="label">Доказательство</span></button>
-      <button class="btn subtle" id="openDocsBtn" type="button" title="Документация">? <span class="label">Документация</span></button>
-      <a class="btn subtle" href="guides.html" title="Руководство">↗ <span class="label">Гайды</span></a>
-      <a class="btn subtle" href="lessons.html" title="Учебный курс">≡ <span class="label">Уроки</span></a>
+      <button class="btn subtle" id="openDocsBtn" type="button" title="Документация" aria-label="Документация">? <span class="label">Документация</span></button>
+      <a class="btn subtle" href="guides.html" title="Руководство" aria-label="Гайды">↗ <span class="label">Гайды</span></a>
+      <a class="btn subtle" href="lessons.html" title="Учебный курс" aria-label="Уроки">≡ <span class="label">Уроки</span></a>
     </nav>
 
     <div class="top-right">
-      <button class="btn subtle" id="openPaletteBtn" type="button" title="Настройка цветовой схемы">◐ <span class="label">Палитра</span></button>
+      <button class="btn subtle" id="openPaletteBtn" type="button" title="Настройка цветовой схемы" aria-label="Палитра">◐ <span class="label">Палитра</span></button>
     </div>
   </header>
 
@@ -117,11 +115,11 @@
     <!-- ================= STAGE ================= -->
     <main class="stage">
       <div class="stage-bar">
-        <button class="iconbtn" id="leftDockBtn" type="button" title="Скрыть панель инструментов">◧</button>
+        <button class="iconbtn" id="leftDockBtn" type="button" aria-controls="toolsDock" aria-expanded="true" title="Скрыть панель инструментов" aria-label="Панель инструментов">◧</button>
         <span class="stage-title">Чертёж</span>
         <span class="count-pill" id="objectCount">0 объектов</span>
         <span class="spacer"></span>
-        <button class="iconbtn" id="rightDockBtn" type="button" title="Скрыть панель доказательства">◨</button>
+        <button class="iconbtn" id="openMenuBtn" type="button" aria-controls="workspaceMenu" aria-expanded="true" title="Скрыть панель доказательства" aria-label="Панель доказательства">◨</button>
       </div>
 
       <div class="board">
@@ -148,7 +146,10 @@
         </svg>
       </div>
 
-      <div class="boardhelp" id="toolHelp">Выбор: перетаскивай свободные точки.</div>
+      <div class="boardhelp">
+        <span class="boardhelp-text" id="toolHelp">Выбор: перетаскивай свободные точки.</span>
+        <button class="boardhelp-more" id="helpMoreBtn" type="button" aria-expanded="false" title="Показать подсказку полностью" aria-label="Показать подсказку полностью">⌄</button>
+      </div>
 
       <div class="boardfoot">
         <div class="legend">
