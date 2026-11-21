@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GeoProof — интерактивная геометрия и доказательства</title>
+<link rel="stylesheet" href="katex/katex.min.css">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="redesign.css">
+</head>
+<body>
+
+<div class="app">
+
+  <header class="top">
+    <div class="brand">Geo<b>Proof</b></div>
+    <div class="top-sep" aria-hidden="true"></div>
+
+    <nav class="topnav" aria-label="Разделы">
+      <button class="btn subtle only-mobile" id="toolsToggleBtn" type="button" aria-expanded="false" title="Инструменты">☰</button>
+      <button class="btn subtle" id="openMenuBtn" type="button" aria-controls="workspaceMenu" aria-expanded="false" title="Панель доказательства">∴ <span class="label">Доказательство</span></button>
+      <button class="btn subtle" id="openDocsBtn" type="button" title="Документация">? <span class="label">Документация</span></button>
+      <a class="btn subtle" href="guides.html" title="Руководство">↗ <span class="label">Гайды</span></a>
+      <a class="btn subtle" href="lessons.html" title="Учебный курс">≡ <span class="label">Уроки</span></a>
+    </nav>
+
+    <div class="top-right">
+      <button class="btn subtle" id="openPaletteBtn" type="button" title="Настройка цветовой схемы">◐ <span class="label">Палитра</span></button>
+    </div>
+  </header>
+
+  <div class="workspace">
+
+    <!-- ================= LEFT DOCK ================= -->
+    <aside class="dock dock-left" id="toolsDock" aria-label="Инструменты и объекты">
+      <div class="dock-head">
+        <h2>Построение</h2>
+        <span class="spacer"></span>
+        <button class="iconbtn only-mobile" id="closeToolsBtn" type="button" title="Закрыть">✕</button>
+      </div>
+
+      <div class="dock-scroll">
+
+        <div class="sect-body" style="padding-top:10px">
+          <div class="tool-group-label">Навигация</div>
+          <div class="tool-grid">
+            <button class="tool active" data-tool="select" type="button"><span class="ico">↖</span>Выбор</button>
+            <button class="tool" data-tool="group" type="button"><span class="ico">⬡</span>Группа</button>
+            <button class="tool" data-tool="pan" type="button"><span class="ico">✋</span>Рука</button>
+          </div>
+
+          <div class="tool-group-label">Объекты</div>
+          <div class="tool-grid">
+            <button class="tool" data-tool="point" type="button"><span class="ico">•</span>Точка</button>
+            <button class="tool" data-tool="segment" type="button"><span class="ico">╱</span>Отрезок</button>
+            <button class="tool" data-tool="triangle" type="button"><span class="ico">△</span>Треуг.</button>
+            <button class="tool" data-tool="circle" type="button"><span class="ico">◯</span>Окруж.</button>
+            <button class="tool" data-tool="midpoint" type="button"><span class="ico">½</span>Середина</button>
+            <button class="tool" data-tool="detach" type="button"><span class="ico">↗</span>Открепить</button>
+          </div>
+
+          <div class="tool-group-label">Отношения</div>
+          <div class="tool-grid">
+            <button class="tool" data-tool="parallel" type="button"><span class="ico">∥</span>Паралл.</button>
+            <button class="tool" data-tool="perpendicular" type="button"><span class="ico">⊥</span>Перпенд.</button>
+            <button class="tool" data-tool="equalLength" type="button"><span class="ico">≡</span>Длина</button>
+            <button class="tool" data-tool="intersection" type="button"><span class="ico">×</span>Пересеч.</button>
+          </div>
+
+          <div class="tool-group-label">Углы и линии</div>
+          <div class="tool-grid">
+            <button class="tool" data-tool="angle" type="button"><span class="ico">∠</span>Угол</button>
+            <button class="tool" data-tool="equalAngle" type="button"><span class="ico">∠=</span>Равные</button>
+            <button class="tool" data-tool="bisector" type="button"><span class="ico">∠½</span>Биссек.</button>
+            <button class="tool" data-tool="median" type="button"><span class="ico">M</span>Медиана</button>
+            <button class="tool" data-tool="altitude" type="button"><span class="ico">H</span>Высота</button>
+            <button class="tool danger" data-tool="delete" type="button"><span class="ico">⌫</span>Удалить</button>
+          </div>
+        </div>
+
+        <details class="sect" open>
+          <summary>Объекты чертежа <span class="count-pill" id="objectListCount">0</span><span class="chev">▶</span></summary>
+          <div class="sect-body">
+            <div class="object-list" id="objectList"></div>
+            <p class="note">Зависимые точки сохраняют положение на родительском объекте. Параллельность, перпендикулярность, равенство длин и углов — активные ограничения.</p>
+          </div>
+        </details>
+
+        <details class="sect">
+          <summary>Состояние модели <span class="chev">▶</span></summary>
+          <div class="sect-body">
+            <div class="model-check">
+              <div class="model-check-head"><span>Целостность</span><span class="model-state" id="modelState">Модель корректна</span></div>
+              <ul class="model-issues" id="modelIssues"></ul>
+            </div>
+          </div>
+        </details>
+
+        <details class="sect" open>
+          <summary>Проект <span class="chev">▶</span></summary>
+          <div class="sect-body">
+            <div class="proof-actions-grid">
+              <button class="btn" id="saveProjectBtn" type="button">Сохранить проект</button>
+              <button class="btn" id="openProjectBtn" type="button">Открыть проект</button>
+              <button class="btn subtle" id="exampleBtn" type="button" style="grid-column:1/-1">Загрузить пример</button>
+            </div>
+            <input type="file" id="projectFileInput" accept=".json,.geoproof.json,application/json" hidden>
+            <p class="note">Файл <code>.geoproof.json</code> хранит геометрию, зависимости, условие и шаги доказательства.</p>
+          </div>
+        </details>
+
+      </div>
+    </aside>
+
+    <div class="splitter" data-split="left" role="separator" aria-orientation="vertical" aria-label="Ширина панели инструментов" tabindex="0"></div>
+
+    <!-- ================= STAGE ================= -->
+    <main class="stage">
+      <div class="stage-bar">
+        <button class="iconbtn" id="leftDockBtn" type="button" title="Скрыть панель инструментов">◧</button>
+        <span class="stage-title">Чертёж</span>
+        <span class="count-pill" id="objectCount">0 объектов</span>
+        <span class="spacer"></span>
+        <button class="iconbtn" id="rightDockBtn" type="button" title="Скрыть панель доказательства">◨</button>
+      </div>
+
+      <div class="board">
+        <div class="board-controls" aria-label="Масштаб">
+          <button class="btn sm icon" id="zoomOutBtn" type="button" title="Отдалить">−</button>
+          <span class="zoom-level" id="zoomLevel">100%</span>
+          <button class="btn sm icon" id="zoomInBtn" type="button" title="Приблизить">+</button>
+          <button class="btn sm" id="zoomResetBtn" type="button" title="Сбросить вид">Сброс</button>
+        </div>
+
+        <svg id="diagram" viewBox="0 0 1000 680" preserveAspectRatio="xMidYMid meet" aria-label="Геометрическое поле">
+          <defs>
+            <pattern id="grid" width="28" height="28" patternUnits="userSpaceOnUse">
+              <path d="M 28 0 L 0 0 0 28" fill="none" stroke="var(--grid, #333a42)" stroke-width=".8"/>
+            </pattern>
+          </defs>
+          <rect x="-10000" y="-10000" width="20000" height="20000" fill="url(#grid)"/>
+          <rect x="-10000" y="-10000" width="20000" height="20000" fill="transparent" data-kind="background"/>
+          <g id="geometry"></g>
+          <g id="markings"></g>
+          <g id="pointsLayer"></g>
+          <text id="emptyCanvasText" x="500" y="322" text-anchor="middle">Выбери инструмент и начни построение</text>
+          <text id="emptyCanvasSub" x="500" y="348" text-anchor="middle">Например, поставь три точки для треугольника</text>
+        </svg>
+      </div>
+
+      <div class="boardhelp" id="toolHelp">Выбор: перетаскивай свободные точки.</div>
+
+      <div class="boardfoot">
+        <div class="legend">
+          <span><i style="background:var(--accent)"></i>свободная</span>
+          <span><i style="background:var(--accent2)"></i>зависимая</span>
+          <span><i style="background:var(--warn)"></i>выделение</span>
+        </div>
+        <div class="boardfoot-actions">
+          <button class="btn sm" id="undoBtn" type="button" title="Ctrl+Z">↶ Отменить</button>
+          <button class="btn sm" id="redoBtn" type="button" title="Ctrl+Y">↷ Повторить</button>
+          <button class="btn sm danger" id="clearBoardBtn" type="button">Очистить поле</button>
+        </div>
+      </div>
+    </main>
+
+    <div class="splitter" data-split="right" role="separator" aria-orientation="vertical" aria-label="Ширина панели доказательства" tabindex="0"></div>
+
+    <!-- ================= RIGHT DOCK ================= -->
+    <aside class="dock dock-right" id="workspaceMenu" aria-label="Доказательство" aria-hidden="false">
+      <div class="dock-head">
+        <h2>Доказательство</h2>
+        <span class="count-pill" id="stepCount">0 шагов</span>
+        <span class="spacer"></span>
+        <button class="iconbtn" id="proofFocusBtn" type="button" aria-pressed="false" title="Полный экран">⛶</button>
+        <button class="iconbtn" id="closeMenuBtn" type="button" title="Закрыть">✕</button>
+      </div>
+
+      <div class="dock-scroll">
+
+        <div class="sect-body" style="padding-top:10px">
+          <div class="taskbox">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+              <span class="sidebar-title" style="font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--faint)">Условие задачи</span>
+              <button class="btn sm subtle" id="editTaskBtn" type="button" style="margin-left:auto">Задать</button>
+            </div>
+            <p id="taskText">Условие задачи ещё не задано.</p>
+            <div class="task-goal">Цель: <b id="taskGoal">не задана</b></div>
+          </div>
+        </div>
+
+        <div class="proof-suite">
+
+          <div class="proof-tabs" role="tablist">
+            <button class="proof-tab active" type="button" role="tab" data-proof-tab="work" aria-selected="true">Шаги</button>
+            <button class="proof-tab" type="button" role="tab" data-proof-tab="library" aria-selected="false">База</button>
+            <button class="proof-tab" type="button" role="tab" data-proof-tab="examples" aria-selected="false">Примеры</button>
+          </div>
+
+          <!-- WORK -->
+          <div data-proof-view="work">
+            <div class="proof-work-toolbar">
+              <div>
+                <h3 class="proof-view-title">Ход рассуждения</h3>
+                <div class="proof-view-caption">Формулы, основания и ссылки</div>
+              </div>
+              <div class="proof-toolbar-actions">
+                <button class="btn primary sm" id="addStepBtn" type="button">＋ Новый шаг</button>
+              </div>
+            </div>
+
+            <div class="proofsteps" id="proofSteps" style="margin-top:10px"></div>
+
+            <div class="proof-subproof-box" style="margin-top:10px">
+              <div class="proof-view-caption" style="margin:0">Логические контексты · временные предположения</div>
+              <div class="proof-context-actions">
+                <button class="btn sm" id="beginSubproofBtn" type="button">∴ Предположить P</button>
+                <button class="btn sm" id="beginCasesBtn" type="button">Разбор · ∨E</button>
+                <button class="btn sm" id="beginExistsElimBtn" type="button">Свидетель · ∃E</button>
+                <button class="btn sm" id="closeSubproofBtn" type="button">Завершить</button>
+              </div>
+              <div class="proof-context-status" id="proofContextStatus">Сейчас нет открытых поддоказательств.</div>
+            </div>
+
+            <div class="proof-goal-status" id="proofGoalStatus" style="margin-top:10px">Цель доказательства не отмечена.</div>
+
+            <div class="proof-actions-grid" style="margin-top:10px">
+              <button class="btn sm" id="toggleGraphBtn" type="button">Показать граф</button>
+              <button class="btn sm" id="presentProofBtn" type="button">Демонстрация</button>
+              <button class="btn sm" id="copyProofBtn" type="button">Скопировать</button>
+              <button class="btn sm" id="printProofBtn" type="button">Печать</button>
+              <button class="btn sm danger" id="clearStepsBtn" type="button" style="grid-column:1/-1">Сбросить доказательство</button>
+            </div>
+
+            <div class="proof-graph" id="proofGraph" hidden style="margin-top:10px">
+              <div class="proof-graph-head"><span>Граф зависимостей</span><span class="muted">основания → выводы</span></div>
+              <div class="proof-graph-lanes" id="proofGraphLanes"></div>
+            </div>
+
+            <div class="proof-outline" style="margin-top:10px">
+              <div class="proof-graph-head"><span>Текстовая запись</span><span class="muted">для копирования</span></div>
+              <pre id="proofOutline">Добавь шаги доказательства.</pre>
+            </div>
+
+            <div class="proof-integrity" id="proofIntegrity" style="margin-top:10px">Проверка структуры: ожидает шагов.</div>
+            <p class="proof-disclaimer" style="margin-top:8px">Проверяется точное соответствие формальной схемы поддерживаемых правил. Истинность геометрических атомов и условия теорем требуют содержательной проверки.</p>
+          </div>
+
+          <!-- LIBRARY -->
+          <div data-proof-view="library" hidden>
+            <h3 class="proof-view-title">Аксиомы, определения и теоремы</h3>
+            <div class="proof-view-caption">Евклидова геометрия плоскости и правила натурального вывода</div>
+            <input class="field-input" id="proofLibrarySearch" type="search" placeholder="Поиск по каталогу оснований…" autocomplete="off" style="margin:10px 0">
+            <div class="proof-library"><div class="proof-library-list" id="proofLibraryList"></div></div>
+          </div>
+
+          <!-- EXAMPLES -->
+          <div data-proof-view="examples" hidden>
+            <h3 class="proof-view-title">Примеры доказательств</h3>
+            <div class="proof-view-caption">Образцы из аксиом и общих понятий; добавляются к текущим шагам</div>
+            <div id="proofExamplesList" style="margin-top:10px"></div>
+          </div>
+
+        </div>
+      </div>
+    </aside>
+
+  </div>
+
+  <footer class="statusbar">
+    <span class="hint-long"><kbd>Space</kbd> панорама · <kbd>Ctrl+Z</kbd> отмена · <kbd>Ctrl+S</kbd> сохранить · <kbd>Esc</kbd> сброс шага</span>
+    <span class="spacer"></span>
+    <span>GeoProof 1.9.4</span>
+  </footer>
+</div>
+
+<div class="dock-scrim" id="dockScrim"></div>
+<div class="menu-backdrop" id="menuBackdrop" hidden></div>
+
+<!-- ================= DOCUMENTATION ================= -->
+<section class="docs" id="documentation" aria-hidden="true" aria-label="Документация">
+  <div class="panelhead">
+    <h2>Документация GeoProof</h2>
+    <span class="spacer" style="margin-left:auto"></span>
+    <button class="btn sm subtle" id="closeDocsBtn" type="button">Закрыть ✕</button>
+  </div>
+  <div class="docs-grid">
+    <nav class="docs-nav" aria-label="Разделы документации">
+      <a href="#doc-start">1. Быстрый старт</a>
+      <a href="#doc-model">2. Модель и доска</a>
+      <a href="#doc-tools">3. Инструменты</a>
+      <a href="#doc-dependencies">4. Зависимости</a>
+      <a href="#doc-constraints">5. Ограничения</a>
+      <a href="#doc-scenarios">6. Сценарии</a>
+      <a href="#doc-proof">7. Доказательство</a>
+      <a href="#doc-formal-logic">8. Формальная логика</a>
+      <a href="#doc-cases">9. Разбор случаев</a>
+      <a href="#doc-proof-examples">10. Примеры</a>
+      <a href="#doc-shortcuts">11. Управление</a>
+      <a href="#doc-themes">12. Темы и встраивание</a>
+      <a href="#doc-limits">13. Ограничения</a>
+    </nav>
+
+    <div class="docs-content">
+      <section class="doc-section" id="doc-start">
+        <h3>1. Быстрый старт</h3>
+        <p>Поле начинается пустым. Выбери инструмент в левой панели и следуй подсказке под доской. Объекты создаются щелчками; повторный щелчок завершает многошаговое построение.</p>
+        <ol>
+          <li>Поставь три точки инструментом «Треугольник» или соедини точки «Отрезком».</li>
+          <li>Добавь середины, пересечения, медианы, высоты или активные ограничения.</li>
+          <li>Перемещай свободные точки инструментом «Выбор» — зависимые объекты перестроятся.</li>
+          <li>Задай условие и цель в правой панели.</li>
+          <li>Записывай шаги доказательства: утверждение, основание, ссылки на предыдущие шаги.</li>
+        </ol>
+        <div class="doc-callout"><b>Ключевой принцип.</b> Чертёж помогает исследовать конфигурацию, но внешний вид и измерение не являются доказательством. Утверждение должно опираться на условие, определение, аксиому или ранее доказанный факт.</div>
+      </section>
+
+      <section class="doc-section" id="doc-model">
+        <h3>2. Геометрическая модель и управление доской</h3>
+        <p>Сущности хранятся отдельно от SVG. Точки бывают свободными и зависимыми; тип зависимости и ссылки на родителей задают математическое положение. Масштаб, тема и размер окна не меняют координаты.</p>
+        <h4>Единая модель точки</h4>
+        <p>Свободная точка хранит координаты. Точка на отрезке — параметр положения, точка на окружности — угол. Середина, пересечение, проекция, биссектриса и концы ограничений вычисляются из родителей. Циклы проверяются по графу родителей до применения привязки.</p>
+        <h4>Окружность</h4>
+        <p>Хранит центр и числовой радиус. Если радиус задан существующей точкой, ссылка сохраняется, и точка управляет радиусом. При удалении опорной точки окружность сохраняет последний радиус; при удалении центра окружность удаляется, а точки на ней освобождаются.</p>
+        <h4>Hit-testing и жесты</h4>
+        <p>Пороги попадания измеряются в CSS-пикселях, поэтому зона выбора пригодна для сенсорного экрана при любом масштабе. При наложении объектов повторные нажатия циклически перебирают варианты. Второй палец отменяет незавершённое перетаскивание и переводит доску в pinch; построения фиксируются на <code>pointerup</code>.</p>
+      </section>
+
+      <section class="doc-section" id="doc-tools">
+        <h3>3. Инструменты редактора</h3>
+        <table class="doc-table">
+          <thead><tr><th>Инструмент</th><th>Действие</th><th>Результат</th></tr></thead>
+          <tbody>
+            <tr><td>Выбор</td><td>Перетащи точку или границу окружности</td><td>Свободная — по полю, на отрезке — вдоль него, на окружности — по границе</td></tr>
+            <tr><td>Группа</td><td>Нажми на объект и тяни</td><td>Связная конфигурация смещается как целое</td></tr>
+            <tr><td>Рука</td><td>Перетаскивание поля</td><td>Панорамирование без изменения геометрии</td></tr>
+            <tr><td>Точка / связи</td><td>Щелчок по полю, линии или точке</td><td>Создание точки и привязка к одному или нескольким отрезкам</td></tr>
+            <tr><td>Открепить</td><td>Точка, затем отрезок</td><td>Снимается только выбранная связь</td></tr>
+            <tr><td>Отрезок</td><td>Две точки</td><td>Отрезок с концами в выбранных точках</td></tr>
+            <tr><td>Треугольник</td><td>Три вершины</td><td>Три отрезка между вершинами</td></tr>
+            <tr><td>Окружность</td><td>Центр, затем точка или место</td><td>Радиус от опорной точки или числовой</td></tr>
+            <tr><td>Середина</td><td>Щелчок по отрезку</td><td>Зависимая середина и два подотрезка</td></tr>
+            <tr><td>Параллельно</td><td>Исходный, затем целевой</td><td>Целевой перестраивается параллельно</td></tr>
+            <tr><td>Перпендикулярно</td><td>Исходный, затем целевой</td><td>Прямой угол сохраняется при перемещении</td></tr>
+            <tr><td>Равная длина</td><td>Исходный, затем целевой</td><td>Длина целевого следует за исходным</td></tr>
+            <tr><td>Пересечение</td><td>Два объекта</td><td>Все действительные точки пересечения</td></tr>
+            <tr><td>Угол</td><td>A, B, C — B вершина</td><td>Дуга и величина меньшего угла</td></tr>
+            <tr><td>Равные углы</td><td>A,B,C затем D,E,F</td><td>Луч EF перестраивается, длина сохраняется</td></tr>
+            <tr><td>Медиана</td><td>Вершина, затем сторона</td><td>Середина стороны и отрезок медианы</td></tr>
+            <tr><td>Высота</td><td>Вершина, затем основание</td><td>Проекция на несущую прямую</td></tr>
+            <tr><td>Биссектриса</td><td>A, B, C — B вершина</td><td>Биссектриса и точка на AC</td></tr>
+            <tr><td>Удалить</td><td>Щелчок по объекту</td><td>Удаление с безопасным освобождением зависимостей</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section class="doc-section" id="doc-dependencies">
+        <h3>4. Зависимые объекты</h3>
+        <p>Положение зависимой точки вычисляется при каждом обновлении из родителей. При удалении родителя точка освобождается в последних координатах либо удаляется вместе с невозможной ветвью.</p>
+        <h4>Несколько линий у одной точки</h4>
+        <p>Одна связь оставляет движение вдоль линии. Независимая пара пересекающихся линий задаёт положение; остальные линии должны проходить через ту же точку. Коллинеарные связи допускаются как избыточные. Несовместимая связь не добавляется, а временно невозможная точка скрывается до восстановления совместимости.</p>
+        <h4>Перемещение пересечений</h4>
+        <p>Точку пересечения можно тянуть напрямую: все независимые управляющие точки родительских построений смещаются на один вектор, поэтому форма, углы и ограничения сохраняются.</p>
+      </section>
+
+      <section class="doc-section" id="doc-constraints">
+        <h3>5. Ограничения и отметки</h3>
+        <p>Параллельность, перпендикулярность, равенство длин и равенство углов — активные ограничения: целевой объект перестраивается. Отметки равных отрезков и дуги только отображают отношение и не являются доказательством.</p>
+        <p>Для ограничения отрезков второй конец целевого отрезка должен быть свободным; для равенства углов свободной должна быть точка F. Циклические зависимости предотвращаются, но универсального решателя произвольных систем ограничений нет.</p>
+      </section>
+
+      <section class="doc-section" id="doc-scenarios">
+        <h3>6. Типовые сценарии</h3>
+        <h4>Медиана</h4>
+        <p>«Треугольник» → A, B, C. «Медиана» → A, затем BC. Появятся M и AM. Перемести B или C — построение перестроится.</p>
+        <h4>Привязка точки</h4>
+        <p>Создай AB и свободную P. Инструментом «Точка» щёлкни P, затем AB. Перетаскивание P пойдёт вдоль AB.</p>
+        <h4>Высота</h4>
+        <p>«Высота» → вершина A, затем BC. Основание H может лечь на продолжении стороны.</p>
+        <h4>Равные углы</h4>
+        <p>«Равные углы» → A,B,C затем D,E,F. Точка F свободна; луч EF повернётся, сохранив длину.</p>
+      </section>
+
+      <section class="doc-section" id="doc-proof">
+        <h3>7. Конструктор доказательства</h3>
+        <p>Шаг содержит утверждение, тип основания, конкретное правило, пояснение, ссылки на предыдущие шаги и область действия. Утверждение вводится свободно или собирается из объектов чертежа и предыдущих формул.</p>
+        <p>Поддерживаются равенство отрезков и углов, сумма частей, параллельность, перпендикулярность, принадлежность точки, середина, коллинеарность, конгруэнтность и подобие треугольников, центроид, ортоцентр, вписанный четырёхугольник, равноудалённость и произвольное утверждение с привязкой объектов.</p>
+        <div class="doc-callout">Выбор правила указывает основание, но не доказывает выполнение его геометрических предпосылок. Каталог — набор шаблонов, а не закрытый список допустимой математики.</div>
+        <p>Граф группирует шаги по уровням зависимостей. Отметка цели — ручная структурная пометка. «Демонстрация» показывает шаги по одному, «Печать» открывает чистый документ.</p>
+      </section>
+
+      <section class="doc-section" id="doc-formal-logic">
+        <h3>8. Формальные высказывания и правила логики</h3>
+        <table class="doc-table">
+          <thead><tr><th>Запись</th><th>Смысл</th></tr></thead>
+          <tbody>
+            <tr><td>P ∧ Q</td><td>Конъюнкция</td></tr>
+            <tr><td>P ∨ Q</td><td>Дизъюнкция (неисключающее «или»)</td></tr>
+            <tr><td>P → Q</td><td>Импликация</td></tr>
+            <tr><td>¬P</td><td>Отрицание</td></tr>
+            <tr><td>⊥</td><td>Противоречие</td></tr>
+          </tbody>
+        </table>
+        <p>В конструкторе <code>?x</code> — свободная переменная, <code>A</code> или <code>c</code> без знака вопроса — константа. Они хранятся разными типами термов.</p>
+        <table class="doc-table">
+          <thead><tr><th>Правило</th><th>Схема</th><th>Условие</th></tr></thead>
+          <tbody>
+            <tr><td>∀I</td><td>P(?a) ⟹ ∀x P(?x)</td><td>?a не встречается свободно в не снятых предположениях</td></tr>
+            <tr><td>∀E</td><td>∀x P(?x) ⟹ P(t)</td><td>Допустимая подстановка терма t</td></tr>
+            <tr><td>∃I</td><td>P(t) ⟹ ∃x P(?x)</td><td>Отдельная доказанная посылка-свидетель</td></tr>
+            <tr><td>∃E</td><td>∃x P(?x), [P(c)] … Q ⟹ Q</td><td>c свежий; Q не содержит c</td></tr>
+          </tbody>
+        </table>
+        <h4>Реализованные правила</h4>
+        <p>∧I, ∧E₁, ∧E₂, →E, ∨I₁, ∨I₂, ∨E, ¬¬E, ⊥I, →I, ¬I, RAA, симметричность и транзитивность равенства, ∀I, ∀E, ∃I, ∃E.</p>
+        <div class="doc-callout"><b>Область действия.</b> Предположение — временная гипотеза внутри поддоказательства, а не аксиома. После закрытия контекста внутренние шаги не становятся фактами внешней области.</div>
+      </section>
+
+      <section class="doc-section" id="doc-cases">
+        <h3>9. Разбор случаев (∨E)</h3>
+        <div class="doc-code">      P ∨ Q
+   ┌───────────┐
+   │ [P]  [Q]  │
+   │  ⋮    ⋮   │
+   │  R    R   │
+   └───────────┘
+         R      (∨E)</div>
+        <p>Выбери доступную дизъюнкцию, открой первый случай, докажи R и закрой его. Затем второй случай с тем же R. Только после этого создаётся вывод по ∨E.</p>
+        <p>Проверяется: форма исходной дизъюнкции, точные предположения P и Q, общий внешний контекст, закрытость обоих случаев и совпадение заключений. Ошибочное правило внутри случая делает итог ошибочным; свободные формулировки переводят итог в «требует содержательной проверки».</p>
+      </section>
+
+      <section class="doc-section" id="doc-proof-examples">
+        <h3>10. Примеры доказательств</h3>
+        <p>Начальные образцы построены прямо из аксиом и общих понятий: единственность прямой через две точки, равенство всех прямых углов (Постулат 4), транзитивность равенства (Общее понятие 1), сложение равных величин (Общее понятие 2), а также формальные образцы ∀E, →E, ∃I и вложенной подстановки с α-эквивалентностью.</p>
+        <p>Пример добавляется в конец текущей последовательности, не удаляя шаги. Открытые поддоказательства нужно предварительно завершить.</p>
+      </section>
+
+      <section class="doc-section" id="doc-shortcuts">
+        <h3>11. Управление</h3>
+        <ul>
+          <li><b>Ctrl+Z</b> / <b>Ctrl+Y</b> — отмена и повтор.</li>
+          <li><b>Ctrl+S</b> — сохранение проекта.</li>
+          <li><b>Space</b> + перетаскивание, средняя кнопка — панорамирование.</li>
+          <li><b>Esc</b> — закрыть окно или отменить незавершённое построение.</li>
+          <li>Колесо мыши — масштаб относительно курсора; два пальца — pinch.</li>
+          <li>Перетаскивание разделителей панелей меняет их ширину; двойной щелчок сбрасывает.</li>
+        </ul>
+      </section>
+
+      <section class="doc-section" id="doc-themes">
+        <h3>12. Темы и встраивание</h3>
+        <p>Кнопка «Палитра» открывает редактор десяти цветовых токенов. Изменения применяются сразу и сохраняются на устройстве. Оформление отделено от математической модели.</p>
+        <div class="doc-code">window.GeoProof.setTheme('graphite');
+
+window.GeoProof.setTheme({
+  tokens: {
+    bg:'#2a2f35', panel:'#31373e', panel2:'#3a4149',
+    border:'#4a525b', text:'#e2e6ea', muted:'#9ba5b0',
+    accent:'#8aa1ba', accent2:'#8ab4a8',
+    canvas:'#252a30', grid:'#333a42'
+  }
+});
+
+const theme = window.GeoProof.getTheme();</div>
+        <p>Модуль заполняет весь контейнер, поэтому его можно разместить в <code>iframe</code> без внешней рамки.</p>
+      </section>
+
+      <section class="doc-section" id="doc-limits">
+        <h3>13. Известные ограничения</h3>
+        <ul>
+          <li>Нет отдельного объекта бесконечной прямой; используется несущая прямая отрезка.</li>
+          <li>Угол отображается от 0° до 180°.</li>
+          <li>Нет универсального решателя систем ограничений и автоматического доказательства теорем.</li>
+          <li>Семантика произвольных предикатов и условий геометрических теорем не проверяется.</li>
+          <li>Проекты хранятся вручную в JSON; облачной синхронизации нет.</li>
+          <li>Печатное представление не включает изображение чертежа.</li>
+        </ul>
+      </section>
+    </div>
+  </div>
+</section>
+
+<!-- ================= MODALS ================= -->
+<div class="overlay" id="taskModal">
+  <div class="modal">
+    <h3>Условие задачи</h3>
+    <div class="form-row"><label for="taskTextInput">Условие</label><textarea id="taskTextInput" placeholder="Что дано…"></textarea></div>
+    <div class="form-row"><label for="taskGoalInput">Что требуется доказать / найти</label><input id="taskGoalInput" type="text" placeholder="Например: BM = MC"></div>
+    <p class="small">Условие и цель не зависят от наличия построений на доске.</p>
+    <div class="modalfoot">
+      <button class="btn subtle" id="cancelTask" type="button">Отмена</button>
+      <button class="btn primary" id="saveTask" type="button">Сохранить условие</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="stepModal">
+  <div class="modal">
+    <h3 id="stepModalTitle">Добавить шаг доказательства</h3>
+
+    <div class="assertion-builder">
+      <div class="builder-title">Сформировать утверждение</div>
+      <div class="form-row"><label for="assertionSearch">Поиск утверждения</label><input id="assertionSearch" type="search" placeholder="равенство, середина, квантор…" autocomplete="off"></div>
+      <div class="form-row"><label for="assertionType">Тип утверждения</label><select id="assertionType" class="field-select"></select></div>
+      <div id="assertionObjectFields"></div>
+      <div class="assertion-preview" id="assertionPreview">Утверждение пока не сформировано.</div>
+      <div class="assertion-hint">Выбор объектов задаёт типизированную запись, но не доказывает её истинность.</div>
+    </div>
+
+    <div class="form-row"><label for="claimInput">Формулировка утверждения</label><input id="claimInput" type="text" placeholder="Например: AB = AC"></div>
+
+    <div class="form-row"><label for="basisType">Тип основания</label>
+      <select id="basisType" class="field-select">
+        <option value="condition">Условие задачи</option>
+        <option value="definition">Определение</option>
+        <option value="axiom">Аксиома</option>
+        <option value="theorem">Теорема</option>
+        <option value="previous">Ранее доказанный факт</option>
+        <option value="construction">Построение</option>
+        <option value="logic">Правило логики</option>
+        <option value="assumption">Временное предположение</option>
+      </select>
+    </div>
+
+    <div class="form-row"><label for="basisRuleSearch">Поиск по каталогу оснований</label><input id="basisRuleSearch" type="search" placeholder="транзитивность, SAS, ∨E…" autocomplete="off"></div>
+    <div class="form-row"><label for="basisRule">Конкретное правило</label><select id="basisRule" class="field-select"></select><div class="small" id="basisRuleInfo"></div></div>
+
+    <div class="form-row"><label for="reasonInput">Обоснование / формулировка правила</label><textarea id="reasonInput" placeholder="Почему утверждение верно…"></textarea></div>
+
+    <div class="checkline"><input type="checkbox" id="isGoalInput"><label for="isGoalInput">Отметить как целевое утверждение</label></div>
+
+    <div class="form-row" style="margin-top:12px"><label for="stepReferenceSearch">Поиск среди предыдущих шагов</label><input id="stepReferenceSearch" type="search" placeholder="номер или текст…" autocomplete="off"></div>
+    <label>Используемые предыдущие шаги</label>
+    <div class="reference-picker" id="stepReferences"></div>
+
+    <div class="modalfoot">
+      <button class="btn subtle" id="cancelStep" type="button">Отмена</button>
+      <button class="btn primary" id="saveStep" type="button">Добавить шаг</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="orElimStartModal">
+  <div class="modal">
+    <h3>Разбор случаев по дизъюнкции</h3>
+    <p class="small">GeoProof откроет два поддоказательства: сначала с предположением P, затем с предположением Q.</p>
+    <div class="form-row" style="margin-top:12px"><label for="caseDisjunctionSelect">Исходная дизъюнкция</label><select id="caseDisjunctionSelect" class="field-select"></select></div>
+    <p class="small">В обоих случаях нужно получить одну и ту же формулу R. Только после этого будет создан вывод по ∨E.</p>
+    <div class="modalfoot">
+      <button class="btn subtle" id="cancelOrElimStart" type="button">Отмена</button>
+      <button class="btn primary" id="confirmOrElimStart" type="button">Начать разбор случаев</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="existsElimStartModal">
+  <div class="modal">
+    <h3>Устранение существования · ∃E</h3>
+    <p class="small">GeoProof введёт свежий параметр c и откроет поддоказательство с временным предположением P(c).</p>
+    <div class="form-row" style="margin-top:12px"><label for="existsElimSourceSelect">Исходное утверждение о существовании</label><select id="existsElimSourceSelect" class="field-select"></select></div>
+    <p class="small">Внешний результат не должен зависеть от имени или свойств свежего свидетеля.</p>
+    <div class="modalfoot">
+      <button class="btn subtle" id="cancelExistsElimStart" type="button">Отмена</button>
+      <button class="btn primary" id="confirmExistsElimStart" type="button">Начать поддоказательство ∃E</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="subproofModal">
+  <div class="modal">
+    <h3 id="subproofModalTitle">Завершить поддоказательство</h3>
+    <div class="proof-context-status" id="subproofAssumptionText">Предположение</div>
+    <div class="form-row" style="margin-top:12px"><label for="subproofConsequence" id="subproofConsequenceLabel">Какое утверждение доказано внутри предположения?</label><select id="subproofConsequence" class="field-select"></select></div>
+    <p class="small" id="subproofHint">GeoProof закроет текущий контекст и применит правило выбранного типа.</p>
+    <div class="modalfoot">
+      <button class="btn subtle" id="cancelSubproof" type="button">Отмена</button>
+      <button class="btn" id="confirmSubproof" type="button">Закрыть и вывести P → Q</button>
+      <button class="btn" id="confirmNegationSubproof" type="button">Закрыть и вывести ¬P</button>
+      <button class="btn" id="confirmRAASubproof" type="button">Закрыть и вывести P · RAA</button>
+      <button class="btn" id="confirmExistsSubproof" type="button">Закрыть и применить ∃E</button>
+      <button class="btn primary" id="confirmCaseConclusion" type="button">Закрыть случай</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================= PRESENTATION ================= -->
+<div class="presentation" id="proofPresentation">
+  <div class="presentation-top">
+    <div class="brand">Geo<b>Proof</b> <span class="muted" style="font-weight:400">· демонстрация</span></div>
+    <span style="margin-left:auto"></span>
+    <button class="btn subtle" id="closePresentation" type="button">Закрыть ✕</button>
+  </div>
+  <div class="presentation-content">
+    <div class="presentation-stepno" id="presentationCounter">Введение</div>
+    <div class="presentation-claim" id="presentationClaim">Условие задачи</div>
+    <div class="presentation-reason" id="presentationReason"></div>
+    <div class="presentation-deps" id="presentationDeps"></div>
+    <div id="gpPresentationAliases" hidden aria-hidden="true">
+      <span id="presentationStepNo" data-mirror="presentationCounter"></span>
+      <span id="presentationTitle" data-mirror="presentationClaim"></span>
+      <span id="presentationTask" data-mirror="presentationClaim"></span>
+      <span id="presentationText" data-mirror="presentationClaim"></span>
+      <span id="presentationGoal" data-mirror="presentationReason"></span>
+      <span id="presentationBasis" data-mirror="presentationReason"></span>
+      <span id="presentationRule" data-mirror="presentationDeps"></span>
+    </div>
+  </div>
+  <div class="presentation-controls">
+    <button class="btn" id="presentationPrev" type="button">← Назад</button>
+    <button class="btn primary" id="presentationNext" type="button">Далее →</button>
+  </div>
+  <div class="presentation-progress"><span id="presentationProgress"></span></div>
+</div>
+
+<script src="katex/katex.min.js"></script>
+<script src="katex/katex-auto-render.min.js"></script>
+<script src="katex/katex-boot.js"></script>
+<script src="app.js"></script>
+<script src="settings.js"></script>
+<script src="ui.js"></script>
+</body>
+</html>

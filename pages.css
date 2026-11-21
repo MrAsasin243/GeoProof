@@ -1,0 +1,122 @@
+/* GeoProof — shared graphite surface for guides.html and lessons.html. */
+
+:root{
+  --bg:#2a2f35; --panel:#31373e; --panel2:#3a4149; --panel3:#434b54;
+  --border:#4a525b; --border-soft:#3f474f; --border-strong:#5b646e;
+  --text:#e2e6ea; --muted:#9ba5b0; --faint:#78828d;
+  --accent:#8aa1ba; --accent2:#8ab4a8; --blue:#8aa1ba; --cyan:#8ab4a8;
+  --ok:#7fae90; --warn:#c6a675; --bad:#c58f8f;
+  --green:#7fae90; --red:#c58f8f; --gold:#c6a675; --purple:#a99bc4;
+  --canvas:#252a30; --grid:#333a42;
+  --ink:#e2e6ea; --ink-soft:#9ba5b0; --ink-faint:#78828d;
+  --surface:#31373e; --surface-2:#3a4149; --surface-3:#434b54;
+  --line:#4a525b; --brand:#8aa1ba; --brand-2:#8ab4a8;
+  --radius:6px; --radius-sm:4px;
+}
+
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg)!important;background-image:none!important;
+  color:var(--text)!important;
+  font-family:Inter,"Segoe UI",system-ui,-apple-system,sans-serif!important;
+}
+
+*{scrollbar-width:thin;scrollbar-color:var(--border-strong) var(--bg)}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border:2px solid var(--bg);border-radius:6px}
+::-webkit-scrollbar-thumb:hover{background:var(--border-strong)}
+
+header,.topbar,.top,.site-header,.page-header{
+  background:var(--panel)!important;background-image:none!important;
+  border-bottom:1px solid var(--border)!important;box-shadow:none!important;
+}
+.brand,.brand-mark,.logo{color:var(--text)!important}
+.brand-mark{background:var(--panel2)!important;border:1px solid var(--border)!important;color:var(--accent)!important;border-radius:4px!important}
+
+aside,.sidebar,.course-sidebar,.toc,.guide-nav,.guide-toc,.docs-nav,.lessons-sidebar{
+  background:var(--panel)!important;background-image:none!important;
+  border-color:var(--border)!important;box-shadow:none!important;
+}
+
+main,.content,.workspace,.lesson-content,.guide-content,.lesson-card,article,section{
+  background-image:none!important;
+}
+.lesson-card,.card,.panel,.guide-card,.guide-section,.note,.callout,.task,.exercise,.solution,.summary-card,.stat,.hero-card{
+  background:var(--panel)!important;border:1px solid var(--border)!important;
+  border-radius:6px!important;box-shadow:none!important;color:var(--text)!important;
+}
+.hero,.course-hero,.guide-hero{
+  background:var(--panel)!important;background-image:none!important;
+  border-bottom:1px solid var(--border)!important;box-shadow:none!important;
+}
+
+h1,h2,h3,h4,h5,strong,b,th{color:var(--text)!important}
+p,li,td,dd,dt,figcaption,.muted,.tiny,.small,.lead,.subtitle{color:var(--muted)!important}
+a{color:var(--accent)!important}
+a:hover{color:var(--text)!important}
+
+button,.btn,.plain-button,.filter,.top-link,.chip,.tag,.badge,.pill{
+  background:var(--panel2)!important;border:1px solid var(--border)!important;
+  color:var(--text)!important;border-radius:4px!important;box-shadow:none!important;
+  background-image:none!important;
+}
+button:hover,.btn:hover,.plain-button:hover,.filter:hover,.top-link:hover{
+  background:var(--panel3)!important;border-color:var(--border-strong)!important;
+}
+.filter.active,.btn.primary,.top-link.primary,.chip.active,.tab.active,[aria-current="page"]{
+  background:color-mix(in srgb,var(--accent) 22%,var(--panel2))!important;
+  border-color:var(--accent)!important;color:var(--text)!important;
+}
+
+input,select,textarea,.search,.field{
+  background:var(--bg)!important;border:1px solid var(--border)!important;
+  color:var(--text)!important;border-radius:4px!important;box-shadow:none!important;
+}
+input:focus,select:focus,textarea:focus,.search:focus{border-color:var(--accent)!important;outline:none!important}
+input::placeholder,textarea::placeholder{color:var(--faint)!important}
+
+table,.doc-table,.guide-table{border-color:var(--border)!important}
+th{background:var(--panel2)!important}
+td,th{border-color:var(--border-soft)!important}
+
+pre,code,.code,.formula,.math-block{
+  background:var(--bg)!important;border-color:var(--border)!important;
+  color:var(--accent2)!important;border-radius:4px!important;
+}
+pre code{border:0!important}
+
+hr,.divider{border-color:var(--border)!important;background:var(--border)!important}
+
+.module-title,.module-head,.side-head,.section-title,.group-title{
+  color:var(--faint)!important;background:transparent!important;border-color:var(--border)!important;
+}
+.module-link,.lesson-link,.toc-link,.nav-link,.guide-link{
+  color:var(--muted)!important;background:transparent!important;border-radius:4px!important;
+}
+.module-link:hover,.lesson-link:hover,.toc-link:hover,.nav-link:hover,.guide-link:hover{
+  background:var(--panel2)!important;color:var(--text)!important;
+}
+.module-link.active,.lesson-link.active,.toc-link.active,.nav-link.active,.guide-link.active{
+  background:color-mix(in srgb,var(--accent) 18%,var(--panel2))!important;
+  color:var(--text)!important;box-shadow:inset 2px 0 0 var(--accent)!important;
+}
+
+.progress,.progress-bar,.bar{background:var(--panel2)!important;border-radius:3px!important}
+.progress span,.progress-bar span,.bar span,.progress-fill{background:var(--accent)!important}
+
+.done,.status-done,.check,.ok{color:var(--ok)!important}
+.warn,.warning{color:var(--warn)!important}
+.error,.danger{color:var(--bad)!important}
+
+.course-note,.disclaimer,.footnote,.footer,footer{
+  background:var(--panel)!important;border-color:var(--border)!important;color:var(--faint)!important;
+}
+
+.katex,.katex-display{color:var(--text)!important}
+
+@media (max-width:900px){
+  .sidebar,.course-sidebar,.toc,.guide-nav,.guide-toc,.lessons-sidebar{
+    background:var(--panel)!important;border-color:var(--border)!important;
+  }
+}
