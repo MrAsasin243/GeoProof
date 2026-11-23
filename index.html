@@ -20,6 +20,7 @@
       <button class="btn subtle" id="openDocsBtn" type="button" title="Документация" aria-label="Документация">? <span class="label">Документация</span></button>
       <a class="btn subtle" href="guides.html" title="Руководство" aria-label="Гайды">↗ <span class="label">Гайды</span></a>
       <a class="btn subtle" href="lessons.html" title="Учебный курс" aria-label="Уроки">≡ <span class="label">Уроки</span></a>
+      <button class="btn subtle" id="openTutorialBtn" type="button" aria-controls="tutorialPanel" aria-expanded="false" title="GeLogLean — руководство" aria-label="Lean-руководство">λ <span class="label">Учебник</span></button>
     </nav>
 
     <div class="top-right">
@@ -481,6 +482,25 @@ const theme = window.GeoProof.getTheme();</div>
   </div>
 </section>
 
+<!-- ================= GeLogLean TUTORIAL ================= -->
+<div class="tutorial-scrim" id="tutorialScrim" hidden></div>
+<section class="tutorial" id="tutorialPanel" aria-hidden="true" aria-label="GeLogLean — руководство">
+  <div class="tutorial-head">
+    <h2>GeLogLean · руководство</h2>
+    <span class="spacer"></span>
+    <a class="btn sm subtle" href="GeLogLean_tutorial.html" target="_blank" rel="noopener" title="Открыть в новой вкладке">↗ Вкладка</a>
+    <button class="btn sm subtle" id="closeTutorialBtn" type="button">Закрыть ✕</button>
+  </div>
+  <iframe class="tutorial-frame" id="tutorialFrame" title="GeLogLean — руководство"></iframe>
+  <div class="tutorial-fallback" id="tutorialFallback" hidden>
+    <p>Браузер не показал файл внутри окна. Это бывает при открытии сайта локально через <code>file://</code>.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+      <button class="btn sm" id="tutorialRetryBtn" type="button">Повторить загрузку</button>
+      <a class="btn sm primary" href="GeLogLean_tutorial.html" target="_blank" rel="noopener">Открыть в новой вкладке ↗</a>
+    </div>
+  </div>
+</section>
+
 <!-- ================= MODALS ================= -->
 <div class="overlay" id="taskModal">
   <div class="modal">
@@ -619,5 +639,6 @@ const theme = window.GeoProof.getTheme();</div>
 <script src="app.js"></script>
 <script src="settings.js"></script>
 <script src="ui.js"></script>
+<script src="tutorial.js"></script>
 </body>
 </html>

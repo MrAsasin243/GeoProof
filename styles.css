@@ -605,3 +605,32 @@ body.proof-focus .proof-formula-line{font-size:16px}
 @media (prefers-reduced-motion:reduce){
   *{transition:none!important;animation:none!important}
 }
+
+/* ---------- GeLogLean tutorial overlay ---------- */
+.tutorial-scrim{position:fixed;inset:0;z-index:194;background:rgba(18,21,25,.72)}
+.tutorial{
+  display:none;position:fixed;z-index:195;inset:4vh 4vw;
+  flex-direction:column;overflow:hidden;
+  background:var(--panel);border:1px solid var(--border-strong);border-radius:var(--r-m);
+  box-shadow:0 24px 70px rgba(12,14,17,.55);
+}
+.tutorial.tutorial-open{display:flex}
+.tutorial-head{
+  flex:0 0 auto;display:flex;align-items:center;gap:8px;
+  padding:10px 14px;background:var(--panel);border-bottom:1px solid var(--border);
+}
+.tutorial-head h2{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tutorial-head .spacer{margin-left:auto}
+.tutorial-frame{flex:1 1 auto;min-height:0;width:100%;border:0;display:block;background:var(--bg)}
+.tutorial-fallback{
+  flex:1 1 auto;min-height:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center;
+}
+.tutorial-fallback p{margin:0;font-size:12px;line-height:1.6;color:var(--muted);max-width:46ch}
+
+@media (max-width:900px){ .tutorial{inset:2vh 2vw} }
+@media (max-width:640px){
+  .tutorial{inset:0;border:0;border-radius:0}
+  .tutorial-head{padding:8px 10px}
+  .tutorial-head h2{font-size:12px}
+}
